@@ -1,7 +1,7 @@
 {
 	"devs": [
-		"172571295077105664",
-		"312238004653785088"
+		"your id",
+		"other person you trust to have permission to control the bot's id"
 	],
 	"token": "",
 	"prefix": "+"

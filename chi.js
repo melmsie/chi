@@ -14,7 +14,6 @@ metrics.init({
 
 client.on('message', msg => {
 	metrics.increment('messages.seen')
-	console.log('hi')
 if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.prefix)) return
 
 	if (msg.isMentioned(client.user.id) && msg.content.includes('help'))
@@ -26,7 +25,6 @@ if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.pr
 
 	try {
 		collectCmdStats()
-		console.log('bye')
 		delete require.cache[require.resolve(`./commands/${command}`)]
 		require(`./commands/${command}`).run(client, msg, args, config, Discord)
 		

@@ -35,7 +35,7 @@ if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.pr
 })
 
 client.on('guildCreate', guild => {
-
+	metrics.increment('guild.joined')
 	snekfetch
 		.post(`https://discordbots.org/api/bots/${client.user.id}/stats`)
 		.set('Authorization', config.orgtoken)
@@ -44,6 +44,9 @@ client.on('guildCreate', guild => {
 		})
 		.then(console.log('Updated dbots status.'))
 
+})
+client.on('guildDelete', () => {
+	metrics.increment('guild.left')
 })
 
 client.once('ready', () => {
@@ -65,7 +68,6 @@ client.login(config.token)
 function collectTechnicalStats() {
 	var memUsage = process.memoryUsage()
 	metrics.gauge('ram.rss', (memUsage.rss / 1048576).toFixed())
-	metrics.gauge('ram.heapTotal', (memUsage.heapTotal / 1048576).toFixed())
 	metrics.gauge('ram.heapUsed', (memUsage.heapUsed / 1048576).toFixed())
 	metrics.gauge('ping', client.ping.toFixed(0))
 	

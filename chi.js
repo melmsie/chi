@@ -4,11 +4,17 @@ const Discord = require('discord.js')
 const client = new Discord.Client({
 	disableEveryone: true
 })
-
-client.login(config.token)
+const metrics = require('datadog-metrics')
+metrics.init({
+	apiKey: config.datadog.APIkey,
+	appKey: config.datadog.APPkey,
+	flushIntervalSeconds: 1,
+	prefix: 'chi.'
+})
 
 client.on('message', msg => {
-
+	metrics.increment('messages.seen')
+	console.log('hi')
 if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.prefix)) return
 
 	if (msg.isMentioned(client.user.id) && msg.content.includes('help'))
@@ -19,8 +25,11 @@ if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.pr
 	const args = msg.content.split(' ').slice(1)
 
 	try {
+		collectCmdStats()
+		console.log('bye')
 		delete require.cache[require.resolve(`./commands/${command}`)]
 		require(`./commands/${command}`).run(client, msg, args, config, Discord)
+		
 	} catch (e) {
 		if (e.message.includes('Cannot find module')) return
 		return console.log(e)
@@ -43,9 +52,33 @@ client.once('ready', () => {
 
 	console.log(`[${new Date()}] ${client.user.username} loaded successfully.`)
 
-	client.user.setGame('H-Hello')
+	client.user.setGame('Hi!')
+
+	setInterval(collectTechnicalStats, 3000)
+	setInterval(collectBotStats, 30000)
 })
 
 process.on('unhandledRejection', err => {
 	console.error(`${Date()}\n Uncaught Promise Error: \n${err.stack}`)
 })
+
+client.login(config.token)
+
+function collectTechnicalStats() {
+	var memUsage = process.memoryUsage()
+	metrics.gauge('ram.rss', (memUsage.rss / 1048576).toFixed())
+	metrics.gauge('ram.heapTotal', (memUsage.heapTotal / 1048576).toFixed())
+	metrics.gauge('ram.heapUsed', (memUsage.heapUsed / 1048576).toFixed())
+	metrics.gauge('ping', client.ping.toFixed(0))
+	
+}
+
+function collectBotStats() {
+	metrics.gauge('totalGuilds', client.guilds.size)
+	metrics.gauge('totalUsers', client.users.size)
+	
+}
+
+function collectCmdStats() {
+	metrics.increment('commands.total')
+}

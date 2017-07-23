@@ -1,5 +1,5 @@
 const util = require('util')
-exports.run = function (client, msg, args) {
+exports.run = function (client, msg, args, config) {
 
 	if (!config.devs.includes(msg.author.id)) return
 

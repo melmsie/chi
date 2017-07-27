@@ -1,6 +1,6 @@
 const snekfetch = require('snekfetch')
 exports.run = function (client, msg) {
-	let cat = await snekfetch.get('http://random.cat/meow')
+	let cat = await snekfetch.get('https://random.cat/meow')
 	await msg.channel.send({
             embed: {
                 color: '5881576',

@@ -35,7 +35,7 @@ if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.pr
 })
 
 client.on('guildCreate', guild => {
-	metrics.increment('guild.joined')
+	metrics.increment('guild.joined', 1, 'events', 'join.event')
 	snekfetch
 		.post(`https://discordbots.org/api/bots/${client.user.id}/stats`)
 		.set('Authorization', config.orgtoken)
@@ -46,7 +46,7 @@ client.on('guildCreate', guild => {
 
 })
 client.on('guildDelete', () => {
-	metrics.increment('guild.left')
+	metrics.increment('guild.left', 1, 'events', 'leave.event')
 })
 
 client.once('ready', () => {
@@ -69,16 +69,15 @@ function collectTechnicalStats() {
 	var memUsage = process.memoryUsage()
 	metrics.gauge('ram.rss', (memUsage.rss / 1048576).toFixed())
 	metrics.gauge('ram.heapUsed', (memUsage.heapUsed / 1048576).toFixed())
-	metrics.gauge('ping', client.ping.toFixed(0))
 	
 }
 
-function collectBotStats() {
+async function collectBotStats() {
 	metrics.gauge('totalGuilds', client.guilds.size)
 	metrics.gauge('totalUsers', client.users.size)
 	
 }
 
-function collectCmdStats() {
+async function collectCmdStats() {
 	metrics.increment('commands.total')
 }

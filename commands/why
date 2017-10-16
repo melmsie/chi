@@ -1,0 +1,10 @@
+const snekfetch = require('snekfetch')
+const config = require('../config.json')
+exports.run = async function (client, msg) {
+        snekfetch.get('https://nekos.life/api/why')
+            .set('Key', config.nekokey)
+            .then(r => msg.channel.send(`${r.bodywhy}`).catch(e => console.warn('wew tf happened here ' + e)))
+
+
+}
+

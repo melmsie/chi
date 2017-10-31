@@ -12,7 +12,7 @@ metrics.init({
 	prefix: 'chi.'
 })
 
-client.on('message', msg => {
+client.on('message', async msg => {
 	metrics.increment('messages.seen')
 if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.prefix)) return
 

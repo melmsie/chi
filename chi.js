@@ -12,7 +12,7 @@ metrics.init({
 	prefix: 'chi.'
 })
 
-client.on('message', msg => {
+client.on('message', async msg => {
 	metrics.increment('messages.seen')
 if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.prefix)) return
 
@@ -26,7 +26,7 @@ if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.pr
 	try {
 		collectCmdStats()
 		delete require.cache[require.resolve(`./commands/${command}`)]
-		require(`./commands/${command}`).run(client, msg, args, config, Discord)
+		await require(`./commands/${command}`).run(client, msg, args, config, Discord)
 		
 	} catch (e) {
 		if (e.message.includes('Cannot find module')) return
@@ -42,7 +42,7 @@ client.on('guildCreate', guild => {
 		.send({
 			'server_count': client.guilds.size
 		})
-		.then(console.log('Updated dbots status.'))
+		.then(() => console.log('Updated dbots status.'))
 
 })
 client.on('guildDelete', () => {
@@ -66,7 +66,7 @@ process.on('unhandledRejection', err => {
 client.login(config.token)
 
 function collectTechnicalStats() {
-	var memUsage = process.memoryUsage()
+	const memUsage = process.memoryUsage()
 	metrics.gauge('ram.rss', (memUsage.rss / 1048576).toFixed())
 	metrics.gauge('ram.heapUsed', (memUsage.heapUsed / 1048576).toFixed())
 	

@@ -14,7 +14,7 @@ metrics.init({
 
 client.on('message', async msg => {
 	metrics.increment('messages.seen')
-if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.prefix)) return
+	if (msg.channel.type === 'dm' || !msg.content.toLowerCase().startsWith(config.prefix)) return
 
 	if (msg.isMentioned(client.user.id) && msg.content.includes('help'))
 		return msg.channel.send(`Hello, ${msg.author.username}. My prefix is \`${config.prefix}\`. Example: \`${config.prefix}help\``)
@@ -72,12 +72,12 @@ function collectTechnicalStats() {
 	
 }
 
-async function collectBotStats() {
+function collectBotStats() {
 	metrics.gauge('totalGuilds', client.guilds.size)
 	metrics.gauge('totalUsers', client.users.size)
 	
 }
 
-async function collectCmdStats() {
+function collectCmdStats() {
 	metrics.increment('commands.total')
 }
